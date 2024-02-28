@@ -79,6 +79,16 @@ const routes = [
         }
       },
       {
+        path: 'tickets/:id',
+        name: 'Pay',
+        component: () => import('@/views/front/PayView.vue'),
+        meta: {
+          title: 'GoConcert - 結帳',
+          login: true,
+          admin: false
+        }
+      },
+      {
         path: '/member',
         component: () => import('@/layouts/MemberLayout.vue'),
         children: [

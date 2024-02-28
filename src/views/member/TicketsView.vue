@@ -65,6 +65,8 @@
         <v-card-text>
           <v-text-field label="演唱會名稱" v-model="name.value.value"
             :error-messages="name.errorMessage.value"></v-text-field>
+          <v-text-field label="演唱會日期" type="date" v-model="date.value.value"
+            :error-messages="date.errorMessage.value"></v-text-field>
           <v-text-field label="表演者" v-model="performer.value.value"
             :error-messages="performer.errorMessage.value"></v-text-field>
           <v-text-field label="原始票價" type="number" min="0" v-model="originalPrice.value.value"
@@ -107,6 +109,7 @@ const openDialog = (item) => {
   if (item) {
     dialogId.value = item._id
     name.value.value = item.name
+    date.value.value = item.date
     performer.value.value = item.performer
     originalPrice.value.value = item.originalPrice
     price.value.value = item.price
@@ -132,6 +135,10 @@ const schema = yup.object({
   name: yup
     .string()
     .required('缺少演唱會名稱'),
+  date: yup
+    .date()
+    .required('缺少演唱會日期')
+    .min(new Date(), '日期須大於今天'),
   performer: yup
     .string()
     .required('缺少表演者名稱'),
@@ -172,6 +179,7 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
 })
 
 const name = useField('name')
+const date = useField('date')
 const performer = useField('performer')
 const originalPrice = useField('originalPrice')
 const price = useField('price')
@@ -185,6 +193,7 @@ const submit = handleSubmit(async (values) => {
     if (dialogId.value === '') {
       await apiAuth.post('/tickets', {
         name: values.name,
+        date: values.date,
         performer: values.performer,
         originalPrice: values.originalPrice,
         price: values.price,
@@ -196,6 +205,7 @@ const submit = handleSubmit(async (values) => {
     } else {
       await apiAuth.patch('/tickets/' + dialogId.value, {
         name: values.name,
+        date: values.date,
         performer: values.performer,
         originalPrice: values.originalPrice,
         price: values.price,
@@ -245,11 +255,13 @@ const tableTickets = ref([])
 // 表格欄位設定
 const tableHeaders = [
   { title: '名稱', align: 'center', sortable: true, key: 'name' },
+  { title: '日期', align: 'center', sortable: true, key: 'date' },
   { title: '表演者', align: 'center', sortable: true, key: 'performer' },
   { title: '原價', align: 'center', sortable: true, key: 'originalPrice' },
   { title: '售價', align: 'center', sortable: true, key: 'price' },
   // { title: '說明', align: 'center', sortable: true, key: 'description' },
   { title: '分類', align: 'center', sortable: true, key: 'categoryCountry' },
+  { title: '性質', align: 'center', sortable: true, key: 'categoryGroup' },
   { title: '上架', align: 'center', sortable: true, key: 'sell' },
   { title: '編輯', align: 'center', sortable: false, key: 'edit' }
 ]

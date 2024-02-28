@@ -1,34 +1,45 @@
 <template>
-  <v-row class="pa-8 ma-0">
-    <v-col cols="12" >
+  <v-row class="pa-8 ma-0 mb-8" style="width: 80%;">
+    <v-col cols="12" class="">
       <h1>票券管理</h1>
       <v-divider></v-divider>
     </v-col>
-    <v-col cols="12">
-      <v-text-field
-        label="搜尋" append-icon="mdi-magnify" v-model="tableSearch"
-        @click:append="tableApplySearch" @keydown.enter="tableApplySearch" >
-      </v-text-field>
-    </v-col>
-    <v-col cols="12" style="background-color: #FFFBE6;">
-      <v-data-table-server
-        v-model:items-per-page="tableItemsPerPage"
-        v-model:sort-by="tableSortBy"
-        v-model:page="tablePage"
-        :items="tableTickets"
-        :headers="tableHeaders"
-        :loading="tableLoading"
-        :items-length="tableItemsLength"
-        :search="tableSearch"
-        @update:items-per-page="tableLoadItems"
-        @update:sort-by="tableLoadItems"
-        @update:page="tableLoadItems"
-        hover>
-        <template #[`item.edit`]="{ item }">
-          <v-btn icon="mdi-pencil" variant="text" color="grey" @click="openDialog(item)"></v-btn>
-        </template>
-      </v-data-table-server>
-    </v-col>
+    <v-card class="mx-auto" width="80%" style="background-color: #FFFBE6;">
+      <v-list>
+          <v-list-item>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  label="搜尋" append-icon="mdi-magnify" v-model="tableSearch"
+                  @click:append="tableApplySearch" @keydown.enter="tableApplySearch" >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-data-table-server
+                  v-model:items-per-page="tableItemsPerPage"
+                  v-model:sort-by="tableSortBy"
+                  v-model:page="tablePage"
+                  :items="tableTickets"
+                  :headers="tableHeaders"
+                  :loading="tableLoading"
+                  :items-length="tableItemsLength"
+                  :search="tableSearch"
+                  @update:items-per-page="tableLoadItems"
+                  @update:sort-by="tableLoadItems"
+                  @update:page="tableLoadItems"
+                  hover>
+                  <template #[`item.eye`]="{ item }">
+                    <v-btn icon="mdi-eye" variant="text" color="grey" @click="openDialog(item)"></v-btn>
+                  </template>
+                  <template #[`item.cancel`]="{ item }">
+                    <v-btn icon="mdi-close" variant="text" color="red" @click="openDialog(item)"></v-btn>
+                  </template>
+                </v-data-table-server>
+              </v-col>
+            </v-row>
+          </v-list-item>
+      </v-list>
+    </v-card>
   </v-row>
 </template>
 
@@ -44,12 +55,15 @@ const createSnackbar = useSnackbar()
 const openDialog = (item) => {
   if (item) {
     dialogId.value = item._id
-    seller.value.value = item.seller
-    seller.value.value = item.seller
+    name.value.value = item.name
+    date.value.value = item.date
+    performer.value.value = item.performer
+    originalPrice.value.value = item.originalPrice
     price.value.value = item.price
-    description.value.value = item.description
-    category.value.value = item.category
+    categoryCountry.value.value = item.categoryCountry
+    categoryGroup.value.value = item.categoryGroup
     sell.value.value = item.sell
+    description.value.value = item.description
   } else {
     dialogId.value = ''
   }
@@ -69,14 +83,16 @@ const tablePage = ref(1)
 const tableTickets = ref([])
 // 表格欄位設定
 const tableHeaders = [
-  { title: '賣家', align: 'center', sortable: true, key: 'seller' },
+  { title: '賣家', align: 'center', sortable: true, key: 'seller.account' },
   { title: '名稱', align: 'center', sortable: true, key: 'name' },
   { title: '表演者', align: 'center', sortable: true, key: 'performer' },
   { title: '原價', align: 'center', sortable: true, key: 'originalPrice' },
   { title: '售價', align: 'center', sortable: true, key: 'price' },
   // { title: '說明', align: 'center', sortable: true, key: 'description' },
-  { title: '分類', align: 'center', sortable: true, key: 'categoryCountry' },
-  { title: '編輯', align: 'center', sortable: false, key: 'edit' }
+  { title: '國籍', align: 'center', sortable: true, key: 'categoryCountry' },
+  { title: '性質', align: 'center', sortable: true, key: 'categoryGroup' },
+  { title: '查看', align: 'center', sortable: false, key: 'eye' },
+  { title: '禁售', align: 'center', sortable: false, key: 'cancel' }
 ]
 // 表格載入狀態
 const tableLoading = ref(true)
