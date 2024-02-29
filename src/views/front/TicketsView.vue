@@ -43,7 +43,6 @@ import { ref, computed, onMounted } from 'vue'
 import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
 import TicketCard from '@/components/TicketCard.vue'
-import gsap from 'gsap'
 
 const { api } = useApi()
 const createSnackbar = useSnackbar()
