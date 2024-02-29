@@ -255,7 +255,7 @@ const tableTickets = ref([])
 // 表格欄位設定
 const tableHeaders = [
   { title: '名稱', align: 'center', sortable: true, key: 'name' },
-  { title: '日期', align: 'center', sortable: true, key: 'date' },
+  { title: '演出日期', align: 'center', sortable: true, key: 'date' },
   { title: '表演者', align: 'center', sortable: true, key: 'performer' },
   { title: '原價', align: 'center', sortable: true, key: 'originalPrice' },
   { title: '售價', align: 'center', sortable: true, key: 'price' },
