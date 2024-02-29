@@ -70,7 +70,7 @@ onMounted(async () => {
       }
     })
     tickets.value.push(...data.result.data)
-    await nextTick()
+    // await nextTick()
   } catch (error) {
     console.log(error)
     const text = error?.response?.data?.message || '發生錯誤，請稍後再試'

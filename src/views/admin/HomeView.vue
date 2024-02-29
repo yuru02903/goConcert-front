@@ -108,7 +108,7 @@ const tableHeaders = [
   { title: '身分證', align: 'center', sortable: true, key: 'nationalIdNumber' },
   { title: 'email', align: 'center', sortable: true, key: 'email' },
   { title: '查看', align: 'center', sortable: false, key: 'eye' },
-  { title: '禁售', align: 'center', sortable: false, key: 'cancel' }
+  { title: '禁用', align: 'center', sortable: false, key: 'cancel' }
 ]
 // 表格載入狀態
 const tableLoading = ref(true)

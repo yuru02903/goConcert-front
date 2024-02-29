@@ -90,8 +90,8 @@ const prependAvatar = computed(() => {
 
 const memberItems = computed(() => {
   return [
-    { to: '/member', text: '我的資料', icon: 'mdi-account' },
-    { to: '/member/tickets', text: '票券管理', icon: 'mdi-ticket-confirmation' }
+    { to: '/member', text: '票券管理', icon: 'mdi-ticket-confirmation' }
+    // { to: '/member/tickets', text: '票券管理', icon: 'mdi-ticket-confirmation' }
   ]
 })
 
