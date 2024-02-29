@@ -1,1 +1,0 @@
-import{ac as c,X as e,Y as r,ad as t}from"./index-97a566c0.js";const o={};function s(n,a){return e(),r(t,{src:"https://raw.githubusercontent.com/yuru02903/goConcert-front/main/src/assets/concert.jpeg"})}const f=c(o,[["render",s]]);export{f as default};
