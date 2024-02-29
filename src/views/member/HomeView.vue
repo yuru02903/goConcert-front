@@ -4,19 +4,12 @@
       <h1>我的資料</h1>
       <v-divider></v-divider>
     </v-col>
-    <v-card class="mx-auto" width="80%" style="background-color: #FFFBE6;">
-      <v-list>
-          <v-list-item>
-            <v-row>
-              <v-col cols="12">
-              </v-col>
-              <v-col cols="12">
-
-              </v-col>
-            </v-row>
-          </v-list-item>
-      </v-list>
-    </v-card>
+    <v-form :disabled="isSubmitting" @submit.prevent="submit">
+      <v-card class="mx-auto" width="80%" style="background-color: #FFFBE6;">
+        <v-text-field label="帳號" v-model="name.value.value"
+        :error-messages="name.errorMessage.value"></v-text-field>
+      </v-card>
+    </v-form>
   </v-row>
 
 </template>
@@ -31,46 +24,99 @@ import { useSnackbar } from 'vuetify-use-dialog'
 const { apiAuth } = useApi()
 const createSnackbar = useSnackbar()
 
-// 表格
-// 表格每頁幾個
-const tableItemsPerPage = ref(10)
-// 表格排序 ( desc=倒序 ; asc=正序 )
-const tableSortBy = ref([
-  { key: 'createdAt', order: 'desc' }
-])
-// 表格頁碼
-const tablePage = ref(1)
-// 表格商品資料陣列
-const tableTickets = ref([])
-// 表格欄位設定
-const tableHeaders = [
-  { title: '帳號', align: 'center', sortable: true, key: 'account' },
-  { title: '身分證', align: 'center', sortable: true, key: 'nationalIdNumber' },
-  { title: 'email', align: 'center', sortable: true, key: 'email' },
-  { title: '查看', align: 'center', sortable: false, key: 'eye' },
-  { title: '禁售', align: 'center', sortable: false, key: 'cancel' }
-]
-// 表格載入狀態
-const tableLoading = ref(true)
-// 表格全部資料數
-const tableItemsLength = ref(0)
-// 表格搜尋文字
-const tableSearch = ref('')
-// 表格載入資料
-const tableLoadItems = async () => {
-  tableLoading.value = true
+const schema = yup.object({
+  name: yup
+    .string()
+    .required('缺少演唱會名稱'),
+  date: yup
+    .date()
+    .required('缺少演唱會日期')
+    .min(new Date(), '日期須大於今天'),
+  performer: yup
+    .string()
+    .required('缺少表演者名稱'),
+  originalPrice: yup
+    .number()
+    .typeError('票券原價格式錯誤，請填寫數字')
+    .required('請填寫票券原價').min(0, '價格不能小於0'),
+  price: yup
+    .number()
+    .typeError('票券售價格式錯誤，請填寫數字')
+    .required('請填寫票券售價').min(0, '價格不能小於0'),
+  description: yup
+    .string(),
+  categoryCountry: yup
+    .string()
+    .required('請選擇表演者國籍')
+    .test('isCategoryCountry', '表演者國籍有誤', value => CategoryCountry.includes(value)),
+  categoryGroup: yup
+    .string()
+    .required('請選擇表演者性質')
+    .test('isCategoryGroup', '表演者性質有誤', value => CategoryGroup.includes(value)),
+  sell: yup
+    .boolean()
+})
+
+const { handleSubmit, isSubmitting, resetForm } = useForm({
+  validationSchema: schema,
+  initialValues: {
+    name: '',
+    performer: '',
+    originalPrice: 0,
+    price: 0,
+    description: '',
+    categoryCountry: '',
+    categoryGroup: '',
+    sell: false
+  }
+})
+
+const name = useField('name')
+const account = useField('date')
+const performer = useField('performer')
+const originalPrice = useField('originalPrice')
+const price = useField('price')
+const description = useField('description')
+const categoryCountry = useField('categoryCountry')
+const categoryGroup = useField('categoryGroup')
+const sell = useField('sell')
+
+const submit = handleSubmit(async (values) => {
   try {
-    const { data } = await apiAuth.get('/users', {
-      params: {
-        page: tablePage.value,
-        itemsPerPage: tableItemsPerPage.value,
-        sortBy: tableSortBy.value[0]?.key || 'createdAt',
-        sortOrder: tableSortBy.value[0]?.order === 'asc' ? 1 : -1,
-        search: tableSearch.value
+    if (dialogId.value === '') {
+      await apiAuth.post('/tickets', {
+        name: values.name,
+        date: values.date,
+        performer: values.performer,
+        originalPrice: values.originalPrice,
+        price: values.price,
+        description: values.description,
+        categoryCountry: values.categoryCountry,
+        categoryGroup: values.categoryGroup,
+        sell: values.sell
+      })
+    } else {
+      await apiAuth.patch('/users/' + dialogId.value, {
+        name: values.name,
+        date: values.date,
+        performer: values.performer,
+        originalPrice: values.originalPrice,
+        price: values.price,
+        description: values.description,
+        categoryCountry: values.categoryCountry,
+        categoryGroup: values.categoryGroup,
+        sell: values.sell
+      })
+    }
+    createSnackbar({
+      text: '編輯成功',
+      showCloseButton: false,
+      snackbarProps: {
+        timeout: 2000,
+        color: 'green',
+        location: 'bottom'
       }
     })
-    tableTickets.value.splice(0, tableTickets.value.length, ...data.result.data)
-    tableItemsLength.value = data.result.total
   } catch (error) {
     console.log(error)
     const text = error?.response?.data?.message || '發生錯誤，請稍後再試'
@@ -84,14 +130,8 @@ const tableLoadItems = async () => {
       }
     })
   }
-  tableLoading.value = false
-}
-tableLoadItems()
+})
 
-const tableApplySearch = () => {
-  tablePage.value = 1
-  tableLoadItems()
-}
 </script>
 
 <style>
