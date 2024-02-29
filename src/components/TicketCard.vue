@@ -1,7 +1,7 @@
 <template>
   <v-card class="ticketCard">
     <v-row  class="ma-0 pa-0">
-      <v-col cols="2">
+      <v-col cols="3">
         <v-card-title style="">
           {{ name }}
         </v-card-title>
@@ -13,7 +13,7 @@
         <h5>原價：{{ originalPrice }}</h5>
         <h5>賣家：{{ seller.account }}</h5>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="5">
         <v-btn class="mx-1" rounded size="small" style="font-weight: 700;" color="bgPrimary">{{ categoryCountry }}</v-btn>
         <v-btn class="mx-1" rounded size="small" style="font-weight: 700;" color="bgPrimary">{{ categoryGroup }}</v-btn>
       </v-col>

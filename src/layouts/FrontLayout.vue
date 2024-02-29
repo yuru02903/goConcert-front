@@ -137,7 +137,7 @@ const drawer = ref(false)
 // 導覽列項目
 const navItems = computed(() => {
   return [
-    { to: '/concerts', text: '近期演出', icon: 'mdi-music', show: true },
+    { to: '/', text: '首頁', icon: 'mdi-music', show: true },
     { to: '/tickets', text: '票券交流', icon: 'mdi-ticket-confirmation', show: true },
     { to: '/seats', text: '座位視野', icon: 'mdi-sofa-single', show: true },
     { to: '/member', text: '會員專區', icon: 'mdi-cog', show: user.isLogin && !user.isAdmin },

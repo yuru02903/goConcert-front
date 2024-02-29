@@ -1,15 +1,16 @@
 <template>
-  <container style="align-items: center; width: 90%;justify-content: center;display: flex;margin-top: 10px;">
+  <container style="align-items: center; width: 90%;justify-content: center;display: flex;margin-top: 30px;">
     <v-list style="width: 800px;background-color: rgba(256, 256, 256, 0.8);">
       <v-list-item>
         <v-row>
-          <v-col cols="12"><h1>{{ ticket.name }}</h1></v-col>
+          <v-col cols="12"><h1 style="color: #e76813;">{{ ticket.name }}</h1></v-col>
           <v-divider></v-divider>
           <v-col cols="6"><h3>表演者：{{ ticket.performer }}</h3></v-col>
           <v-col cols="6"><h3>原價：{{ ticket.originalPrice }}</h3></v-col>
           <v-col cols="12"><h3>演出日期：{{ ticket.date }}</h3></v-col>
+          <v-col cols="12"><h3>其他說明：{{ ticket.description }}</h3></v-col>
           <v-divider></v-divider>
-          <v-col cols="12"><h2 style="font-weight: 500;">售價：NT$ {{ ticket.price}}</h2></v-col>
+          <v-col cols="12"><h2 style="font-weight: 700;color: #e76813;">售價：NT$ {{ ticket.price}}</h2></v-col>
         </v-row>
       </v-list-item>
       <v-divider></v-divider>
@@ -19,14 +20,14 @@
           <v-card>
             <h2 style="margin-top: 30px;">聯絡資訊</h2>
             <v-card-text>
-              <v-text-field label="收件人姓名" error-messages="請輸入姓名"></v-text-field>
-              <v-text-field label="連絡電話" type="number" error-messages="請輸入電話"></v-text-field>
-              <v-text-field label="電子信箱" error-messages="請輸入電子信箱"></v-text-field>
-              <v-text-field label="地址" error-messages="請輸入地址"></v-text-field>
+              <v-text-field label="收件人姓名"></v-text-field>
+              <v-text-field label="連絡電話"></v-text-field>
+              <v-text-field label="電子信箱"></v-text-field>
+              <v-text-field label="地址"></v-text-field>
 
-              <v-select label="付款方式" :items="payWay" error-messages="請選擇付款方式"></v-select>
- 
-              <v-checkbox label="我以閱讀並同意服務條款" error-messages="請勾選"></v-checkbox>
+              <v-select label="付款方式" :items="payWay"></v-select>
+
+              <v-checkbox label="我以閱讀並同意服務條款"></v-checkbox>
 
             </v-card-text>
             <v-card-actions>
@@ -196,8 +197,6 @@ const submit = handleSubmit(async (values) => {
         location: 'bottom'
       }
     })
-    closeDialog()
-    tableApplySearch()
   } catch (error) {
     console.log(error)
     const text = error?.response?.data?.message || '發生錯誤，請稍後再試'
