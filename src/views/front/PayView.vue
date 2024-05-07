@@ -1,14 +1,17 @@
 <template>
-  <container style="align-items: center; width: 90%;justify-content: center;display: flex;margin-top: 30px;">
+  <container style="align-items: center; width: 90%;justify-content: center;display: flex;padding-top: 30px;margin: auto">
     <v-list style="width: 800px;background-color: rgba(256, 256, 256, 0.8);">
       <v-list-item>
         <v-row>
           <v-col cols="12"><h1 style="color: #e76813;">{{ ticket.name }}</h1></v-col>
           <v-divider></v-divider>
-          <v-col cols="6"><h3>表演者：{{ ticket.performer }}</h3></v-col>
-          <v-col cols="6"><h3>原價：{{ ticket.originalPrice }}</h3></v-col>
+          <v-col cols="12" md="6"><h3>表演者：{{ ticket.performer }}</h3></v-col>
+          <v-col cols="12" md="6"><h3>原價：{{ ticket.originalPrice }}</h3></v-col>
           <v-col cols="12"><h3>演出日期：{{ ticket.date }}</h3></v-col>
-          <v-col cols="12"><h3>其他說明：{{ ticket.description }}</h3></v-col>
+          <v-col cols="12">
+            <h3 v-if="ticket.description.length > 0">其他說明：{{ ticket.description }}</h3>
+            <h3 v-else>其他說明：無</h3>
+          </v-col>
           <v-divider></v-divider>
           <v-col cols="12"><h2 style="font-weight: 700;color: #e76813;">售價：NT$ {{ ticket.price}}</h2></v-col>
         </v-row>
@@ -16,18 +19,47 @@
       <v-divider></v-divider>
       <v-list-item style="background-color: #FFFBE6;"></v-list-item>
       <v-list-item>
-        <v-form :disabled="isSubmitting" @submit.prevent="submit">
-          <v-card>
-            <h2 style="margin-top: 30px;">聯絡資訊</h2>
+        <v-form :disabled="isSubmitting" @submit.prevent="submit" v-if="ticket.sell">
+          <!-- 如果票券尚未下架 => 可填寫收件資訊 -->
+          <v-card >
+            <h2 style="margin-top: 30px;">收件資訊</h2>
             <v-card-text>
-              <v-text-field label="收件人姓名"></v-text-field>
-              <v-text-field label="連絡電話"></v-text-field>
-              <v-text-field label="電子信箱"></v-text-field>
-              <v-text-field label="地址"></v-text-field>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-text-field label="收件人姓名"></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="連絡電話"></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="電子信箱"></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-select label="交貨方式" :items="deliveryWay" v-model="selectedDeliveryWay"></v-select>
+                </v-col>
+                <v-col cols="12">
+                  <v-text-field label="宅配地址" v-if="selectedDeliveryWay === '宅配'"></v-text-field>
+                </v-col>
+                <v-col cols="12" md="5">
+                  <v-select label="請選擇超商"
+                  :items="convenienceStore"
+                  v-if="selectedDeliveryWay === '超商取貨'"
+                  v-model="selectedCconvenienceStore"></v-select>
+                </v-col>
+                <v-col cols="12" md="5" offset-md="2" v-if="selectedDeliveryWay === '超商取貨' && selectedCconvenienceStore === '7-11'">
+                  <v-text-field label="7-11店號"></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6" offset-md="1" v-if="selectedDeliveryWay === '超商取貨' && selectedCconvenienceStore === '全家'">
+                  <v-text-field label="全家店號"></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-select label="付款方式" :items="payWay"></v-select>
+                </v-col>
+                <v-col cols="12">
 
-              <v-select label="付款方式" :items="payWay"></v-select>
-
-              <v-checkbox label="我以閱讀並同意服務條款"></v-checkbox>
+                </v-col>
+              </v-row>
+              <v-checkbox label="我已閱讀並同意服務條款"></v-checkbox>
 
             </v-card-text>
             <v-card-actions>
@@ -37,6 +69,14 @@
             </v-card-actions>
           </v-card>
         </v-form>
+        <v-row v-else style="text-align: center;align-items: center;" class="py-4">
+          <v-col cols="12">
+            <h2>抱歉，該票券已售出或下架</h2>
+          </v-col>
+          <v-col cols="12">
+            <v-btn color="textPrimary" to="/tickets">返回</v-btn>
+          </v-col>
+        </v-row>
       </v-list-item>
     </v-list>
   </container>
@@ -60,6 +100,10 @@ const createSnackbar = useSnackbar()
 const user = useUserStore()
 
 const payWay = ['信用卡', '轉帳', 'linepay']
+const deliveryWay = ['面交', '超商取貨', '宅配']
+const selectedDeliveryWay = ref('')
+const convenienceStore = ['7-11', '全家']
+const selectedCconvenienceStore = ref('7-11')
 
 const ticket = ref({
   _id: '',
@@ -72,36 +116,6 @@ const ticket = ref({
   categoryCountry: '',
   categoryGroup: '',
   sell: true
-})
-
-onMounted(async () => {
-  try {
-    const { data } = await api.get('/tickets/' + route.params.id)
-    ticket.value._id = data.result._id
-    ticket.value.name = data.result.name
-    ticket.value.date = data.result.date
-    ticket.value.performer = data.result.performer
-    ticket.value.originalPrice = data.result.originalPrice
-    ticket.value.price = data.result.price
-    ticket.value.description = data.result.description
-    ticket.value.categoryCountry = data.result.categoryCountry
-    ticket.value.categoryGroup = data.result.categoryGroup
-    ticket.value.sell = data.result.sell
-
-    document.title = `GoConcert - ${ticket.value.name}`
-  } catch (error) {
-    const text = error?.response?.data?.message || '發生錯誤，請稍後再試'
-    createSnackbar({
-      text,
-      showCloseButton: false,
-      snackbarProps: {
-        timeout: 2000,
-        color: 'red',
-        location: 'bottom'
-      }
-    })
-    router.push('/')
-  }
 })
 
 const schema = yup.object({
@@ -209,6 +223,36 @@ const submit = handleSubmit(async (values) => {
         location: 'bottom'
       }
     })
+  }
+})
+
+onMounted(async () => {
+  try {
+    const { data } = await api.get('/tickets/' + route.params.id)
+    ticket.value._id = data.result._id
+    ticket.value.name = data.result.name
+    ticket.value.date = data.result.date
+    ticket.value.performer = data.result.performer
+    ticket.value.originalPrice = data.result.originalPrice
+    ticket.value.price = data.result.price
+    ticket.value.description = data.result.description
+    ticket.value.categoryCountry = data.result.categoryCountry
+    ticket.value.categoryGroup = data.result.categoryGroup
+    ticket.value.sell = data.result.sell
+
+    document.title = `GoConcert - ${ticket.value.name}`
+  } catch (error) {
+    const text = error?.response?.data?.message || '發生錯誤，請稍後再試'
+    createSnackbar({
+      text,
+      showCloseButton: false,
+      snackbarProps: {
+        timeout: 2000,
+        color: 'red',
+        location: 'bottom'
+      }
+    })
+    router.push('/')
   }
 })
 </script>

@@ -9,34 +9,34 @@
         </v-card-title>
       </v-col>
     </v-row>
-    <v-row class="pa-0 ma-0" style="height: 100%;">
-      <v-navigation-drawer
-        v-model="adminDrawer"
-        permanent
-        style="position: relative;float: left;height: 100%;"
-        color="bgPrimary"
+    <v-navigation-drawer
+      v-model="adminDrawer"
+      permanent
+      style="position: relative;float: left;height: 100%;"
+      color="bgPrimary"
 
+    >
+      <v-list-item
+        :prepend-avatar
+        :title="user.account"
+        class="py-4"
       >
-        <v-list-item
-          :prepend-avatar
-          :title="user.account"
-          class="py-4"
-        >
-        </v-list-item>
+      </v-list-item>
 
-        <v-divider></v-divider>
+      <v-divider></v-divider>
 
-        <v-list density="compact" nav >
-          <template v-for="item in adminItems" :key="item.to" >
-            <v-list-item :to="item.to" :active="false">
-              <template #prepend>
-                <v-icon :icon="item.icon"></v-icon>
-              </template>
-              <v-list-item-title> {{ item.text }} </v-list-item-title>
-            </v-list-item>
-          </template>
-        </v-list>
-      </v-navigation-drawer>
+      <v-list density="compact" nav >
+        <template v-for="item in adminItems" :key="item.to" >
+          <v-list-item :to="item.to" :active="false">
+            <template #prepend>
+              <v-icon :icon="item.icon"></v-icon>
+            </template>
+            <v-list-item-title> {{ item.text }} </v-list-item-title>
+          </v-list-item>
+        </template>
+      </v-list>
+    </v-navigation-drawer>
+    <v-row class="pa-0 ma-0">
       <RouterView :key="$route.path" ></RouterView>
     </v-row>
 

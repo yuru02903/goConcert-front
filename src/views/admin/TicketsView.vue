@@ -1,6 +1,6 @@
 <template>
-  <v-row class="pa-8 ma-0 mb-8" style="width: 80%;">
-    <v-col cols="12" class="">
+  <v-row class="py-8 px-4 ma-0">
+    <v-col cols="12" class=" ">
       <h1>票券管理</h1>
       <v-divider></v-divider>
     </v-col>
@@ -41,6 +41,48 @@
       </v-list>
     </v-card>
   </v-row>
+  <!-- <v-row class="py-8 px-4 ma-0">
+    <v-col cols="12" class=" ">
+      <h1>票券管理</h1>
+      <v-divider></v-divider>
+    </v-col>
+    <v-card class="mx-auto" width="80%" style="background-color: #FFFBE6;">
+      <v-list>
+          <v-list-item>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  label="搜尋" append-icon="mdi-magnify" v-model="tableSearch"
+                  @click:append="tableApplySearch" @keydown.enter="tableApplySearch" >
+                </v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-data-table-server
+                  v-model:items-per-page="tableItemsPerPage"
+                  v-model:sort-by="tableSortBy"
+                  v-model:page="tablePage"
+                  :items="tableTickets"
+                  :headers="tableHeaders"
+                  :loading="tableLoading"
+                  :items-length="tableItemsLength"
+                  :search="tableSearch"
+                  @update:items-per-page="tableLoadItems"
+                  @update:sort-by="tableLoadItems"
+                  @update:page="tableLoadItems"
+                  hover>
+                  <template #[`item.eye`]="{ item }">
+                    <v-btn icon="mdi-eye" variant="text" color="grey" @click="openDialog(item)"></v-btn>
+                  </template>
+                  <template #[`item.cancel`]="{ item }">
+                    <v-btn icon="mdi-close" variant="text" color="red" @click="openDialog(item)"></v-btn>
+                  </template>
+                </v-data-table-server>
+              </v-col>
+            </v-row>
+          </v-list-item>
+      </v-list>
+    </v-card>
+  </v-row> -->
 </template>
 
 <script setup>
@@ -51,24 +93,6 @@ import { useSnackbar } from 'vuetify-use-dialog'
 
 const { apiAuth } = useApi()
 const createSnackbar = useSnackbar()
-
-const openDialog = (item) => {
-  if (item) {
-    dialogId.value = item._id
-    name.value.value = item.name
-    date.value.value = item.date
-    performer.value.value = item.performer
-    originalPrice.value.value = item.originalPrice
-    price.value.value = item.price
-    categoryCountry.value.value = item.categoryCountry
-    categoryGroup.value.value = item.categoryGroup
-    sell.value.value = item.sell
-    description.value.value = item.description
-  } else {
-    dialogId.value = ''
-  }
-  dialog.value = true
-}
 
 // 表格
 // 表格每頁幾個
@@ -90,7 +114,7 @@ const tableHeaders = [
   { title: '售價', align: 'center', sortable: true, key: 'price' },
   // { title: '說明', align: 'center', sortable: true, key: 'description' },
   { title: '國籍', align: 'center', sortable: true, key: 'categoryCountry' },
-  { title: '性質', align: 'center', sortable: true, key: 'categoryGroup' },
+  // { title: '性質', align: 'center', sortable: true, key: 'categoryGroup' },
   { title: '查看', align: 'center', sortable: false, key: 'eye' },
   { title: '禁售', align: 'center', sortable: false, key: 'cancel' }
 ]
@@ -138,3 +162,7 @@ const tableApplySearch = () => {
 }
 
 </script>
+
+<style>
+
+</style>

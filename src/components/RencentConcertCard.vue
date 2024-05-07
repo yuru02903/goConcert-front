@@ -1,11 +1,16 @@
 <template>
-  <v-card >
+  <v-card>
+    <v-img
+      height="200px" cover
+      src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg"
+
+    ></v-img>
     <v-row  class="ma-0 pa-0">
       <v-col cols="3">
         <v-card-title style="">
           {{ name }}
         </v-card-title>
-        <v-card-subtitle style="color: #e76813;font-weight: bolder;opacity: 1;" class="pb-1" > 售價：{{ price }}</v-card-subtitle>
+        <v-card-subtitle style="color: #e76813;font-weight: bolder;opacity: 1;" class="pb-1"> 售價：{{ price }}</v-card-subtitle>
       </v-col>
       <v-col cols="2" class="ma-0 pa-3">
         <h5>日期：{{ date }}</h5>
@@ -15,7 +20,7 @@
       </v-col>
       <v-col cols="5">
         <v-btn class="mx-1" rounded size="small" style="font-weight: 700;" color="bgPrimary">{{ categoryCountry }}</v-btn>
-        <!-- <v-btn class="mx-1" rounded size="small" style="font-weight: 700;" color="bgPrimary">{{ categoryGroup }}</v-btn> -->
+        <v-btn class="mx-1" rounded size="small" style="font-weight: 700;" color="bgPrimary">{{ categoryGroup }}</v-btn>
       </v-col>
       <v-divider vertical></v-divider>
       <v-col cols="2" style="background-color: #e76813;">
@@ -34,7 +39,18 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
+import axios from 'axios'
+import * as cheerio from 'cheerio'
+import fs from 'node:fs'
 
-const props = defineProps(['_id', 'name', 'date', 'performer', 'venue', 'area', 'row, seat', 'originalPrice', 'price', 'seller', 'buyer', 'categoryCountry', 'description', 'sell'])
+onMounted(async () => {
+  try {
+    const { page } = await axios.get('https://ticket.ibon.com.tw/Home/MoreResult?inATAPWebType=entertainment&inATAPID=96')
+    const $ = cheerio.load(page)
+  } catch (error) {
+    console.log(error)
+  }
+})
 
 </script>

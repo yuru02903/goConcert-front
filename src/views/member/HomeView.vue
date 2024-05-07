@@ -1,95 +1,14 @@
 <template>
   <v-row class="pa-0 ma-0">
     <v-col cols="12" class="pa-8">
-      <h1>票券管理</h1>
+      <h1>我的資料</h1>
       <v-divider></v-divider>
     </v-col>
       <v-card class="mx-auto" width="80%">
-        <v-list>
-          <v-list-group value="MyTickets">
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" title="我的票券"></v-list-item>
-            </template>
-            <v-list-item>
-              <v-row class="pt-2">
-                <v-col cols="6">
-                  <v-btn color="green" @click="openDialog()">新增票券</v-btn>
-                </v-col>
-                <v-col cols="6">
-                  <v-text-field
-                    label="搜尋" append-icon="mdi-magnify" density="comfortable"
-                    v-model="tableSearch" rounded variant="outlined"
-                    @click:append="tableApplySearch"
-                    @keydown.enter="tableApplySearch"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-data-table-server
-                    v-model:items-per-page="tableItemsPerPage"
-                    v-model:sort-by="tableSortBy"
-                    v-model:page="tablePage"
-                    :items="tableTickets"
-                    :headers="tableHeaders"
-                    :loading="tableLoading"
-                    :items-length="tableItemsLength"
-                    :search="tableSearch"
-                    @update:items-per-page="tableLoadItems"
-                    @update:sort-by="tableLoadItems"
-                    @update:page="tableLoadItems"
-                    hover >
-                    <template #[`item.sell`]="{ item }">
-                      <v-icon icon="mdi-check" v-if="item.sell"></v-icon>
-                    </template>
-                    <template #[`item.edit`]="{ item }">
-                      <v-btn icon="mdi-pencil" variant="text" color="grey" @click="openDialog(item)"></v-btn>
-                    </template>
-                  </v-data-table-server>
-                </v-col>
-              </v-row>
-            </v-list-item>
-          </v-list-group>
-          <v-list-group value="Admin">
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" title="轉讓紀錄">
-              </v-list-item>
-            </template>
-          </v-list-group>
-        </v-list>
+
       </v-card>
   </v-row>
 
-  <v-dialog v-model="dialog" width="500px">
-    <v-form :disabled="isSubmitting" @submit.prevent="submit">
-      <v-card>
-        <v-card-title>{{ dialogId === '' ? '新增票券' : '編輯票券' }}</v-card-title>
-        <v-card-text>
-          <v-text-field label="演唱會名稱" v-model="name.value.value"
-            :error-messages="name.errorMessage.value"></v-text-field>
-          <v-text-field label="演唱會日期" type="date" v-model="date.value.value"
-            :error-messages="date.errorMessage.value"></v-text-field>
-          <v-text-field label="表演者" v-model="performer.value.value"
-            :error-messages="performer.errorMessage.value"></v-text-field>
-          <v-text-field label="原始票價" type="number" min="0" v-model="originalPrice.value.value"
-            :error-messages="originalPrice.errorMessage.value"></v-text-field>
-          <v-text-field label="售價" type="number" min="0" v-model="price.value.value"
-            :error-messages="price.errorMessage.value"></v-text-field>
-          <v-select label="表演者國籍" :items="CategoryCountry" v-model="categoryCountry.value.value"
-            :error-messages="categoryCountry.errorMessage.value"></v-select>
-          <v-select label="表演者性質" :items="CategoryGroup" v-model="categoryGroup.value.value"
-            :error-messages="categoryGroup.errorMessage.value"></v-select>
-          <v-checkbox label="是否上架" v-model="sell.value.value"
-            :error-messages="sell.errorMessage.value"></v-checkbox>
-          <v-textarea label="其他說明" v-model="description.value.value"
-            :error-messages="description.errorMessage.value"></v-textarea>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="red" :disabled="isSubmitting" @click="closeDialog">取消</v-btn>
-          <v-btn color="green" type="submit" :loading="isSubmitting">送出</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-form>
-  </v-dialog>
 </template>
 
 <script setup>
@@ -101,32 +20,6 @@ import { useSnackbar } from 'vuetify-use-dialog'
 
 const { apiAuth } = useApi()
 const createSnackbar = useSnackbar()
-
-const dialog = ref(false)
-const dialogId = ref('')
-
-const openDialog = (item) => {
-  if (item) {
-    dialogId.value = item._id
-    name.value.value = item.name
-    date.value.value = item.date
-    performer.value.value = item.performer
-    originalPrice.value.value = item.originalPrice
-    price.value.value = item.price
-    categoryCountry.value.value = item.categoryCountry
-    categoryGroup.value.value = item.categoryGroup
-    sell.value.value = item.sell
-    description.value.value = item.description
-  } else {
-    dialogId.value = ''
-  }
-  dialog.value = true
-}
-
-const closeDialog = () => {
-  dialog.value = false
-  resetForm()
-}
 
 const CategoryCountry = ['台灣', '韓國', '日本', '歐美', '泰國', '其他']
 const CategoryGroup = ['團體', '個人']

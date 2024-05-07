@@ -101,17 +101,17 @@ const routes = [
               login: true,
               admin: false
             }
+          },
+          {
+            path: 'tickets',
+            name: 'MemberTickets',
+            component: () => import('@/views/member/TicketsView.vue'),
+            meta: {
+              title: 'GoConcert - 票券管理',
+              login: true,
+              admin: false
+            }
           }
-          // {
-          //   path: 'tickets',
-          //   name: 'MemberTickets',
-          //   component: () => import('@/views/member/TicketsView.vue'),
-          //   meta: {
-          //     title: 'GoConcert - 票券管理',
-          //     login: true,
-          //     admin: false
-          //   }
-          // }
         ]
       }
 
@@ -126,14 +126,14 @@ const routes = [
         name: 'AdminHome',
         component: () => import('@/views/admin/HomeView.vue'),
         meta: {
-          title: 'GoConcert - 管理專區',
+          title: 'GoConcert - 會員管理',
           login: true,
           admin: true
         }
       },
       {
         path: 'tickets',
-        name: 'TicketsSeats',
+        name: 'AdminTickets',
         component: () => import('@/views/admin/TicketsView.vue'),
         meta: {
           title: 'GoConcert - 票券管理',

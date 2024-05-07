@@ -40,10 +40,9 @@
           </v-list-item>
       </v-list>
     </v-card>
-
   </v-row>
 
-  <v-dialog v-model="dialog" width="500px">
+  <!-- <v-dialog v-model="dialog" width="500px">
     <v-form :disabled="isSubmitting" @submit.prevent="submit">
       <v-card>
         <v-card-title>{{ dialogId === '' ? '新增座位' : '編輯座位' }}</v-card-title>
@@ -78,18 +77,22 @@
         </v-card-actions>
       </v-card>
     </v-form>
-  </v-dialog>
+  </v-dialog> -->
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import * as yup from 'yup'
-import { useForm, useField } from 'vee-validate'
+// import * as yup from 'yup'
+// import { useForm, useField } from 'vee-validate'
 import { useApi } from '@/composables/axios'
 import { useSnackbar } from 'vuetify-use-dialog'
 
 const { apiAuth } = useApi()
 const createSnackbar = useSnackbar()
+
+// const dialog = ref(false)
+
+// const dialogId = ref('')
 
 // 表格
 // 表格每頁幾個

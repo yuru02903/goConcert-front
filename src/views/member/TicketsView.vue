@@ -58,29 +58,103 @@
       </v-card>
   </v-row>
 
-  <v-dialog v-model="dialog" width="500px">
+  <v-dialog v-model="dialog" width="500px" >
     <v-form :disabled="isSubmitting" @submit.prevent="submit">
       <v-card>
-        <v-card-title>{{ dialogId === '' ? '新增票券' : '編輯票券' }}</v-card-title>
+        <v-card-title >{{ dialogId === '' ? '新增票券' : '編輯票券' }}</v-card-title>
         <v-card-text>
-          <v-text-field label="演唱會名稱" v-model="name.value.value"
-            :error-messages="name.errorMessage.value"></v-text-field>
-          <v-text-field label="演唱會日期" type="date" v-model="date.value.value"
-            :error-messages="date.errorMessage.value"></v-text-field>
-          <v-text-field label="表演者" v-model="performer.value.value"
-            :error-messages="performer.errorMessage.value"></v-text-field>
-          <v-text-field label="原始票價" type="number" min="0" v-model="originalPrice.value.value"
-            :error-messages="originalPrice.errorMessage.value"></v-text-field>
-          <v-text-field label="售價" type="number" min="0" v-model="price.value.value"
-            :error-messages="price.errorMessage.value"></v-text-field>
-          <v-select label="表演者國籍" :items="CategoryCountry" v-model="categoryCountry.value.value"
-            :error-messages="categoryCountry.errorMessage.value"></v-select>
-          <v-select label="表演者性質" :items="CategoryGroup" v-model="categoryGroup.value.value"
-            :error-messages="categoryGroup.errorMessage.value"></v-select>
-          <v-checkbox label="是否上架" v-model="sell.value.value"
-            :error-messages="sell.errorMessage.value"></v-checkbox>
-          <v-textarea label="其他說明" v-model="description.value.value"
-            :error-messages="description.errorMessage.value"></v-textarea>
+          <v-row no-gutters>
+            <v-col cols="12">
+              <v-text-field
+                label="演唱會名稱"
+                v-model="name.value.value"
+                :error-messages="name.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="演唱會日期"
+                type="date"
+                v-model="date.value.value"
+                :error-messages="date.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="表演者"
+                v-model="performer.value.value"
+                :error-messages="performer.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="場館"
+                v-model="venue.value.value"
+                :error-messages="venue.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="區域"
+                v-model="area.value.value"
+                :error-messages="area.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="6" class="pr-2" >
+              <v-text-field
+                label="排"
+                v-model="row.value.value"
+                :error-messages="row.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="6" class="pl-2" >
+              <v-select
+                label="座位 (非必選)"
+                :items="Seat"
+                v-model="seat.value.value"
+                :error-messages="seat.errorMessage.value">
+              </v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="原始票價"
+                type="number" min="0"
+                v-model="originalPrice.value.value"
+                :error-messages="originalPrice.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="售價"
+                type="number"
+                min="0"
+                v-model="price.value.value"
+                :error-messages="price.errorMessage.value">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                label="表演者國籍"
+                :items="CategoryCountry"
+                v-model="categoryCountry.value.value"
+                :error-messages="categoryCountry.errorMessage.value">
+              </v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                label="其他說明"
+                v-model="description.value.value"
+                :error-messages="description.errorMessage.value">
+              </v-textarea>
+            </v-col>
+            <v-checkbox
+              label="是否上架"
+              v-model="sell.value.value"
+              :error-messages="sell.errorMessage.value">
+            </v-checkbox>
+          </v-row>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -111,10 +185,14 @@ const openDialog = (item) => {
     name.value.value = item.name
     date.value.value = item.date
     performer.value.value = item.performer
+    venue.value.value = item.venue
+    area.value.value = item.area
+    row.value.value = item.row
+    seat.value.value = item.seat
     originalPrice.value.value = item.originalPrice
     price.value.value = item.price
     categoryCountry.value.value = item.categoryCountry
-    categoryGroup.value.value = item.categoryGroup
+    // categoryGroup.value.value = item.categoryGroup
     sell.value.value = item.sell
     description.value.value = item.description
   } else {
@@ -129,7 +207,8 @@ const closeDialog = () => {
 }
 
 const CategoryCountry = ['台灣', '韓國', '日本', '歐美', '泰國', '其他']
-const CategoryGroup = ['團體', '個人']
+const Seat = ['近走道', '靠中間']
+// const CategoryGroup = ['團體', '個人']
 
 const schema = yup.object({
   name: yup
@@ -142,6 +221,18 @@ const schema = yup.object({
   performer: yup
     .string()
     .required('缺少表演者名稱'),
+  venue: yup
+    .string()
+    .required('缺少場館名稱'),
+  area: yup
+    .string()
+    .required('缺少區域名稱'),
+  row: yup
+    .string()
+    .required('缺少排數'),
+  seat: yup
+    .string(),
+  // .test('isSeat', '座位有誤', value => Seat.includes(value)),
   originalPrice: yup
     .number()
     .typeError('票券原價格式錯誤，請填寫數字')
@@ -156,10 +247,10 @@ const schema = yup.object({
     .string()
     .required('請選擇表演者國籍')
     .test('isCategoryCountry', '表演者國籍有誤', value => CategoryCountry.includes(value)),
-  categoryGroup: yup
-    .string()
-    .required('請選擇表演者性質')
-    .test('isCategoryGroup', '表演者性質有誤', value => CategoryGroup.includes(value)),
+  // categoryGroup: yup
+  //   .string()
+  //   .required('請選擇表演者性質')
+  //   .test('isCategoryGroup', '表演者性質有誤', value => CategoryGroup.includes(value)),
   sell: yup
     .boolean()
 })
@@ -169,11 +260,15 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
   initialValues: {
     name: '',
     performer: '',
+    venue: '',
+    area: '',
+    row: '',
+    seat: '',
     originalPrice: 0,
     price: 0,
     description: '',
     categoryCountry: '',
-    categoryGroup: '',
+    // categoryGroup: '',
     sell: false
   }
 })
@@ -181,11 +276,15 @@ const { handleSubmit, isSubmitting, resetForm } = useForm({
 const name = useField('name')
 const date = useField('date')
 const performer = useField('performer')
+const venue = useField('venue')
+const area = useField('area')
+const row = useField('row')
+const seat = useField('seat')
 const originalPrice = useField('originalPrice')
 const price = useField('price')
 const description = useField('description')
 const categoryCountry = useField('categoryCountry')
-const categoryGroup = useField('categoryGroup')
+// const categoryGroup = useField('categoryGroup')
 const sell = useField('sell')
 
 const submit = handleSubmit(async (values) => {
@@ -195,11 +294,15 @@ const submit = handleSubmit(async (values) => {
         name: values.name,
         date: values.date,
         performer: values.performer,
+        venue: values.venue,
+        area: values.area,
+        row: values.row,
+        seat: values.seat,
         originalPrice: values.originalPrice,
         price: values.price,
         description: values.description,
         categoryCountry: values.categoryCountry,
-        categoryGroup: values.categoryGroup,
+        // categoryGroup: values.categoryGroup,
         sell: values.sell
       })
     } else {
@@ -207,11 +310,15 @@ const submit = handleSubmit(async (values) => {
         name: values.name,
         date: values.date,
         performer: values.performer,
+        venue: values.venue,
+        area: values.area,
+        row: values.row,
+        seat: values.seat,
         originalPrice: values.originalPrice,
         price: values.price,
         description: values.description,
         categoryCountry: values.categoryCountry,
-        categoryGroup: values.categoryGroup,
+        // categoryGroup: values.categoryGroup,
         sell: values.sell
       })
     }
@@ -257,11 +364,15 @@ const tableHeaders = [
   { title: '名稱', align: 'center', sortable: true, key: 'name' },
   { title: '演出日期', align: 'center', sortable: true, key: 'date' },
   { title: '表演者', align: 'center', sortable: true, key: 'performer' },
+  { title: '場館', align: 'center', sortable: true, key: 'venue' },
+  { title: '區域', align: 'center', sortable: true, key: 'area' },
+  { title: '排', align: 'center', sortable: true, key: 'row' },
+  { title: '座位', align: 'center', sortable: true, key: 'seat' },
   { title: '原價', align: 'center', sortable: true, key: 'originalPrice' },
   { title: '售價', align: 'center', sortable: true, key: 'price' },
   // { title: '說明', align: 'center', sortable: true, key: 'description' },
   { title: '分類', align: 'center', sortable: true, key: 'categoryCountry' },
-  { title: '性質', align: 'center', sortable: true, key: 'categoryGroup' },
+  // { title: '性質', align: 'center', sortable: true, key: 'categoryGroup' },
   { title: '上架', align: 'center', sortable: true, key: 'sell' },
   { title: '編輯', align: 'center', sortable: false, key: 'edit' }
 ]
@@ -271,6 +382,10 @@ const tableLoading = ref(true)
 const tableItemsLength = ref(0)
 // 表格搜尋文字
 const tableSearch = ref('')
+
+const currentDate = new Date() // 獲取當前日期和時間的 Date 物件
+const formattedDate = currentDate.toISOString().split('T')[0] // 格式化日期為年-月-日
+
 // 表格載入資料
 const tableLoadItems = async () => {
   tableLoading.value = true
@@ -284,6 +399,7 @@ const tableLoadItems = async () => {
         search: tableSearch.value
       }
     })
+    console.log(data.result.data)
     tableTickets.value.splice(0, tableTickets.value.length, ...data.result.data)
     tableItemsLength.value = data.result.total
   } catch (error) {

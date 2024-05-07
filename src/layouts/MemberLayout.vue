@@ -1,73 +1,73 @@
 <template >
-  <row style="height: 100%" >
-  <!-- <div style="width: 1280px; margin-right: auto; margin-left: auto;box-sizing: border-box;" > -->
-    <v-navigation-drawer
-      v-model="memberDrawer"
-      :rail="rail"
-      permanent
-      @click="rail = false"
-      style="position: relative;float: left;"
-      color="bgPrimary"
-      v-if="isSmall"
-    >
-    <v-list-item
-        :prepend-avatar="prependAvatar"
-        :title="user.account"
-        class="pt-4"
-      >
-        <template v-slot:append>
-          <v-btn
-            variant="text"
-            icon="mdi-chevron-left"
-            @click.stop="rail = !rail"
-          ></v-btn>
-        </template>
-      </v-list-item>
-
-      <v-divider></v-divider>
-
-      <v-list density="compact" nav >
-        <template v-for="item in memberItems" :key="item.to" >
-          <v-list-item :to="item.to" :active="false">
-            <template #prepend>
-              <v-icon :icon="item.icon"></v-icon>
-            </template>
-            <v-list-item-title> {{ item.text }} </v-list-item-title>
-          </v-list-item>
-        </template>
-      </v-list>
-    </v-navigation-drawer>
-    <v-navigation-drawer
+  <v-navigation-drawer
     v-model="memberDrawer"
-      permanent
-      style="position: relative;float: left;height: 100%;"
-      color="bgPrimary"
-      v-else
+    :rail="rail"
+    permanent
+    @click="rail = false"
+    style="position: relative;float: left;top: 0;"
+    color="bgPrimary"
+    v-if="isSmall"
+  >
+  <v-list-item
+      :prepend-avatar="prependAvatar"
+      :title="user.account"
+      class="pt-4"
     >
-      <v-list-item
-        :prepend-avatar="prependAvatar"
-        :title="user.account"
-        class="py-4"
-      >
-      </v-list-item>
+      <template v-slot:append>
+        <v-btn
+          variant="text"
+          icon="mdi-chevron-left"
+          @click.stop="rail = !rail"
+        ></v-btn>
+      </template>
+    </v-list-item>
 
-      <v-divider></v-divider>
+    <v-divider></v-divider>
 
-      <v-list density="compact" nav >
-        <template v-for="item in memberItems" :key="item.to" >
-          <v-list-item :to="item.to" :active="false">
-            <template #prepend>
-              <v-icon :icon="item.icon"></v-icon>
-            </template>
-            <v-list-item-title> {{ item.text }} </v-list-item-title>
-          </v-list-item>
-        </template>
-      </v-list>
-    </v-navigation-drawer>
+    <v-list density="compact" nav >
+      <template v-for="item in memberItems" :key="item.to" >
+        <v-list-item :to="item.to" :active="false">
+          <template #prepend>
+            <v-icon :icon="item.icon"></v-icon>
+          </template>
+          <v-list-item-title> {{ item.text }} </v-list-item-title>
+        </v-list-item>
+      </template>
+    </v-list>
+  </v-navigation-drawer>
+  <v-navigation-drawer
+  v-model="memberDrawer"
+    permanent
+    style="position: relative;float: left;height: 100%;"
+    color="bgPrimary"
+    v-else
+  >
+    <v-list-item
+      :prepend-avatar="prependAvatar"
+      :title="user.account"
+      class="py-4"
+    >
+    </v-list-item>
+
+    <v-divider></v-divider>
+
+    <v-list density="compact" nav >
+      <template v-for="item in memberItems" :key="item.to" >
+        <v-list-item :to="item.to" :active="false">
+          <template #prepend>
+            <v-icon :icon="item.icon"></v-icon>
+          </template>
+          <v-list-item-title> {{ item.text }} </v-list-item-title>
+        </v-list-item>
+      </template>
+    </v-list>
+  </v-navigation-drawer>
+  <v-row class="pa-0 ma-0">
+  <!-- <div style="width: 1280px; margin-right: auto; margin-left: auto;box-sizing: border-box;" > -->
 
     <RouterView :key="$route.path" ></RouterView>
 
-  </row>
+  </v-row>
 </template>
 
 <script setup>
@@ -90,8 +90,8 @@ const prependAvatar = computed(() => {
 
 const memberItems = computed(() => {
   return [
-    { to: '/member', text: '票券管理', icon: 'mdi-ticket-confirmation' }
-    // { to: '/member/tickets', text: '票券管理', icon: 'mdi-ticket-confirmation' }
+    { to: '/member', text: '我的資料', icon: 'mdi-account' },
+    { to: '/member/tickets', text: '票券管理', icon: 'mdi-ticket-confirmation' }
   ]
 })
 

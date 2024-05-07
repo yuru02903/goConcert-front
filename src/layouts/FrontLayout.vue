@@ -1,5 +1,5 @@
 <template>
-  <v-card color="mainColor" style="height: 100%;" class="pb-8">
+  <v-card color="mainColor" style="height: 100%;">
     <!-- 手機板 -->
     <template v-if="isSmall">
       <!-- logo + 摺疊按鈕 -->
@@ -26,7 +26,7 @@
             <v-list-item-title> 登出 </v-list-item-title>
           </v-list-item>
           <template v-for="item in navItems" :key="item.to">
-            <v-list-item :to="item.to">
+            <v-list-item :to="item.to" v-if="item.show" :active="false">
               <template #prepend>
                 <v-icon :icon="item.icon"></v-icon>
               </template>
@@ -50,7 +50,7 @@
           v-model="tab"
           bg-color="transparent"
           color="mainColor"
-          grow
+          class="display-flex"
           :active="false"
         >
         <template
@@ -61,11 +61,12 @@
             :prepend-icon="item.icon"
             :active="false"
             v-if="item.show"
+            class="flex-grow"
           >
             {{ item.text }}
           </v-tab>
         </template>
-        <v-btn width="16%" height="100%" variant="text" prepend-icon="mdi-login" @click="login = true" v-if="!user.isLogin"> 登入/註冊
+        <v-btn class="flex-grow" height="100%" variant="text" prepend-icon="mdi-login" @click="login = true" v-if="!user.isLogin"> 登入/註冊
           <v-dialog v-model="login" scrollable width="40%" min-width="600px" transition="dialog-top-transition">
             <v-card class="rounded-xl" >
               <v-window v-model="step">
@@ -103,9 +104,8 @@
       </v-tabs>
     </template>
     <v-divider></v-divider>
-    <!-- <v-main > -->
+    <!-- RouterView 綁定 key => 即使路由元件相同，若網址變更仍會重新渲染網頁 -->
     <RouterView :key="$route.path" ></RouterView>
-    <!-- </v-main> -->
 
   </v-card>
 </template>
@@ -139,7 +139,7 @@ const navItems = computed(() => {
   return [
     { to: '/', text: '首頁', icon: 'mdi-music', show: true },
     { to: '/tickets', text: '票券交流', icon: 'mdi-ticket-confirmation', show: true },
-    { to: '/seats', text: '座位視野', icon: 'mdi-sofa-single', show: true },
+    // { to: '/seats', text: '座位視野', icon: 'mdi-sofa-single', show: true },
     { to: '/member', text: '會員專區', icon: 'mdi-cog', show: user.isLogin && !user.isAdmin },
     { to: '/admin', text: '管理專區', icon: 'mdi-cog', show: user.isLogin && user.isAdmin }
   ]
@@ -198,5 +198,13 @@ a {
 
 .bb {
   border-bottom: 2px solid #e0e0e0; /* 调整底线粗细和颜色 */
+}
+
+.display-flex {
+  display: flex;
+}
+
+.flex-grow {
+  flex-grow: 1;
 }
 </style>
