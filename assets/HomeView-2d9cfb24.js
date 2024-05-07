@@ -1,1 +1,0 @@
-import{ac as e,X as c,Y as r,ad as o}from"./index-46689435.js";const t=""+new URL("concert-4e20bc09.jpeg",import.meta.url).href,s={};function a(n,_){return c(),r(o,{src:t})}const f=e(s,[["render",a]]);export{f as default};
