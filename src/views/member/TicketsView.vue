@@ -6,7 +6,7 @@
     </v-col>
       <v-card class="mx-auto" width="80%">
         <v-list>
-          <v-list-group value="MyTickets">
+          <v-list-group value="UnsoldTickets">
             <template v-slot:activator="{ props }">
               <v-list-item v-bind="props" title="我的票券"></v-list-item>
             </template>
@@ -40,8 +40,9 @@
                     <template #[`item.sell`]="{ item }">
                       <v-icon icon="mdi-check" v-if="item.sell"></v-icon>
                     </template>
-                    <template #[`item.edit`]="{ item }">
-                      <v-btn icon="mdi-pencil" variant="text" color="grey" @click="openDialog(item)"></v-btn>
+                    <template #[`item.edit`]="{ item }" >
+                      <v-btn icon="mdi-pencil" variant="text" color="green" @click="openDialog(item)" v-if="item.orderStatus === '未售出'"></v-btn>
+                      <v-btn icon="mdi-eye" variant="text" color="grey" @click="openDialog(item)" v-else ></v-btn>
                     </template>
                   </v-data-table-server>
                 </v-col>
@@ -60,10 +61,11 @@
 
   <v-dialog v-model="dialog" width="500px" >
     <v-form :disabled="isSubmitting" @submit.prevent="submit">
-      <v-card>
+      <v-card >
         <v-card-title >{{ dialogId === '' ? '新增票券' : '編輯票券' }}</v-card-title>
         <v-card-text>
-          <v-row no-gutters>
+          <!-- 未售出票券可修改資料 -->
+          <v-row no-gutters v-if="orderStatus.value.value === '未售出'">
             <v-col cols="12">
               <v-text-field
                 label="演唱會名稱"
@@ -155,11 +157,106 @@
               :error-messages="sell.errorMessage.value">
             </v-checkbox>
           </v-row>
+          <!-- 已成立訂單票券僅能查看 -->
+          <v-row no-gutters v-else>
+            <v-col cols="12">
+              <h4 class="pb-2 text-red">該票券已售出，僅能查看資訊，無法修改</h4>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="演唱會名稱"
+                v-model="name.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="演唱會日期"
+                type="date"
+                v-model="date.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="表演者"
+                v-model="performer.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="場館"
+                v-model="venue.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="區域"
+                v-model="area.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="6" class="pr-2" >
+              <v-text-field
+                label="排"
+                v-model="row.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="6" class="pl-2" >
+              <v-select
+                label="座位 (非必選)"
+                :items="Seat"
+                v-model="seat.value.value"
+                readonly>
+              </v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="原始票價"
+                type="number" min="0"
+                v-model="originalPrice.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
+                label="售價"
+                type="number"
+                min="0"
+                v-model="price.value.value"
+                readonly>
+              </v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-select
+                label="表演者國籍"
+                :items="CategoryCountry"
+                v-model="categoryCountry.value.value"
+                readonly>
+              </v-select>
+            </v-col>
+            <v-col cols="12">
+              <v-textarea
+                label="其他說明"
+                v-model="description.value.value"
+                readonly>
+              </v-textarea>
+            </v-col>
+          </v-row>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions v-if="orderStatus.value.value === '未售出'" class="pb-6">
           <v-spacer></v-spacer>
           <v-btn color="red" :disabled="isSubmitting" @click="closeDialog">取消</v-btn>
           <v-btn color="green" type="submit" :loading="isSubmitting">送出</v-btn>
+        </v-card-actions>
+        <v-card-actions v-else class="pb-6">
+          <v-spacer></v-spacer>
+          <v-btn color="gray" @click="closeDialog">關閉</v-btn>
         </v-card-actions>
       </v-card>
     </v-form>
@@ -195,6 +292,7 @@ const openDialog = (item) => {
     // categoryGroup.value.value = item.categoryGroup
     sell.value.value = item.sell
     description.value.value = item.description
+    orderStatus.value.value = item.orderStatus
   } else {
     dialogId.value = ''
   }
@@ -205,10 +303,18 @@ const closeDialog = () => {
   dialog.value = false
   resetForm()
 }
-
+// 設定票券國籍選項陣列(與後端設定相同)
 const CategoryCountry = ['台灣', '韓國', '日本', '歐美', '泰國', '其他']
+
+// 設定票券座位選項陣列(與後端設定相同)
 const Seat = ['近走道', '靠中間']
-// const CategoryGroup = ['團體', '個人']
+
+// 取得當前日期
+const currentDate = new Date() // 假設今天是 2024 年 5 月 10 日
+
+// 設定隔日變數，將當前日期加上一天
+const nextDay = new Date(currentDate)
+nextDay.setDate(currentDate.getDate() + 1) // .getDate() 是取得日期中的"天"，.setDate()是設定日期中的"天"為特定數字
 
 const schema = yup.object({
   name: yup
@@ -217,7 +323,7 @@ const schema = yup.object({
   date: yup
     .date()
     .required('缺少演唱會日期')
-    .min(new Date(), '日期須大於今天'),
+    .min(nextDay, '日期不可小於今天'),
   performer: yup
     .string()
     .required('缺少表演者名稱'),
@@ -286,6 +392,7 @@ const description = useField('description')
 const categoryCountry = useField('categoryCountry')
 // const categoryGroup = useField('categoryGroup')
 const sell = useField('sell')
+const orderStatus = useField('orderStatus')
 
 const submit = handleSubmit(async (values) => {
   try {
@@ -303,7 +410,8 @@ const submit = handleSubmit(async (values) => {
         description: values.description,
         categoryCountry: values.categoryCountry,
         // categoryGroup: values.categoryGroup,
-        sell: values.sell
+        sell: values.sell,
+        orderStatus: '未售出'
       })
     } else {
       await apiAuth.patch('/tickets/' + dialogId.value, {
@@ -364,17 +472,15 @@ const tableHeaders = [
   { title: '名稱', align: 'center', sortable: true, key: 'name' },
   { title: '演出日期', align: 'center', sortable: true, key: 'date' },
   { title: '表演者', align: 'center', sortable: true, key: 'performer' },
-  { title: '場館', align: 'center', sortable: true, key: 'venue' },
-  { title: '區域', align: 'center', sortable: true, key: 'area' },
-  { title: '排', align: 'center', sortable: true, key: 'row' },
-  { title: '座位', align: 'center', sortable: true, key: 'seat' },
+  // { title: '場館', align: 'center', sortable: true, key: 'venue' },
+  // { title: '區域', align: 'center', sortable: true, key: 'area' },
+  // { title: '排', align: 'center', sortable: true, key: 'row' },
+  // { title: '座位', align: 'center', sortable: true, key: 'seat' },
   { title: '原價', align: 'center', sortable: true, key: 'originalPrice' },
   { title: '售價', align: 'center', sortable: true, key: 'price' },
-  // { title: '說明', align: 'center', sortable: true, key: 'description' },
-  { title: '分類', align: 'center', sortable: true, key: 'categoryCountry' },
-  // { title: '性質', align: 'center', sortable: true, key: 'categoryGroup' },
+  { title: '票券狀態', align: 'center', sortable: true, key: 'orderStatus' },
   { title: '上架', align: 'center', sortable: true, key: 'sell' },
-  { title: '編輯', align: 'center', sortable: false, key: 'edit' }
+  { title: '編輯/查看', align: 'center', sortable: false, key: 'edit' }
 ]
 // 表格載入狀態
 const tableLoading = ref(true)
@@ -383,8 +489,7 @@ const tableItemsLength = ref(0)
 // 表格搜尋文字
 const tableSearch = ref('')
 
-const currentDate = new Date() // 獲取當前日期和時間的 Date 物件
-const formattedDate = currentDate.toISOString().split('T')[0] // 格式化日期為年-月-日
+// const formattedDate = currentDate.toISOString().split('T')[0] // 格式化日期為年-月-日
 
 // 表格載入資料
 const tableLoadItems = async () => {

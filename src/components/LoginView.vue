@@ -1,7 +1,7 @@
 <template>
-  <v-container class="px-8 py-12" >
+  <v-container class="px-8 py-12">
     <h1 class="text-mainColor pb-4"> 登入 </h1>
-    <v-form  :disabled="isSubmitting" @submit.prevent="submit" >
+    <v-form :disabled="isSubmitting" @submit.prevent="submit" >
       <v-text-field
         class="mb-2"
         label="電子信箱" type="email" variant="underlined"

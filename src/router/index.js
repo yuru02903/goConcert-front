@@ -111,6 +111,16 @@ const routes = [
               login: true,
               admin: false
             }
+          },
+          {
+            path: 'orders',
+            name: 'MemberOrders',
+            component: () => import('@/views/member/OrdersView.vue'),
+            meta: {
+              title: 'GoConcert - 訂單管理',
+              login: true,
+              admin: false
+            }
           }
         ]
       }

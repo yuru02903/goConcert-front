@@ -36,12 +36,17 @@
           </v-col>
           <v-divider></v-divider>
         </v-row>
-        <v-row>
-          <v-col cols="12" v-for="(item, index) in paginatedData" :key="index" class="ticketCard">
+        <v-row v-if="tickets.length > 0">
+          <v-col cols="12" v-for="(item, index) in paginatedData" :key="index" class="ticketCard" >
             <TicketCard v-bind="item"></TicketCard>
           </v-col>
           <v-col cols="12">
             <v-pagination v-model="currentPage" :length="totalPages" @input="changePage"></v-pagination>
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-col cols="12" class="text-center">
+            <h2 class="text-gray">目前尚無可購買票券</h2>
           </v-col>
         </v-row>
 
@@ -174,5 +179,9 @@ const ticketApplySearch = async () => {
 /* .ticketCard {
   opacity: 0;
 } */
+
+.text-gray {
+  color: grey
+}
 
 </style>

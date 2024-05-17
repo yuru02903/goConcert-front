@@ -25,7 +25,8 @@
     "vue-router": "^4.0.0",
     "vuetify": "^3.0.0",
     "vuetify-use-dialog": "^0.6.8",
-    "yup": "^1.3.3"
+    "yup": "^1.4.0",
+    "yup-phone": "^1.3.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
